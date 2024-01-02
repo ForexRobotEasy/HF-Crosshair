@@ -1,0 +1,71 @@
+
+// Developer: Forex Robot Easy Team
+// Developer's Site: forexroboteasy.com
+
+#property indicator_chart_window
+#property indicator_buffers 2
+#property indicator_color1 Lime
+#property indicator_color2 Red
+#property indicator_width1 2
+#property indicator_width2 2
+#property strict
+
+// Indicator Parameters
+extern bool ShowCrosshair = true;
+extern color CrosshairColor = dodgerblue;
+extern int CrosshairWidth = 1;
+
+// Indicator Global Variables
+double CrosshairBuffer1[];
+double CrosshairBuffer2[];
+
+// Indicator Initialization Function
+int OnInit()
+{
+    // Set indicator buffers
+    SetIndexBuffer(0, CrosshairBuffer1);
+    SetIndexBuffer(1, CrosshairBuffer2);
+
+    // Set indicator labels
+    IndicatorDigits(Digits - Point);
+    SetIndexLabel(0, 'Crosshair Up');
+    SetIndexLabel(1, 'Crosshair Down');
+
+    // Set indicator style
+    SetIndexStyle(0, DRAW_ARROW);
+    SetIndexStyle(1, DRAW_ARROW);
+
+    // Set indicator colors and widths
+    SetIndexArrow(0, SYMBOL_ARROWUP);
+    SetIndexArrow(1, SYMBOL_ARROWDOWN);
+    SetIndexShift(0, 1);
+    SetIndexShift(1, 1);
+    SetIndexBuffer(0, CrosshairBuffer1);
+    SetIndexBuffer(1, CrosshairBuffer2);
+
+    return(INIT_SUCCEEDED);
+}
+
+// Indicator Calculation Function
+int OnCalculate(const int rates_total,
+                const int prev_calculated,
+                const datetime &time[],
+                const double &open[],
+                const double &high[],
+                const double &low[],
+                const double &close[],
+                const long &tick_volume[],
+                const long &volume[],
+                const int &spread[])
+{
+    int limit = rates_total - prev_calculated;
+
+    for (int i = 0; i < limit; i++)
+    {
+        // Calculate crosshair values
+        CrosshairBuffer1[i] = i % 2 == 0 ? high[i] : low[i];
+        CrosshairBuffer2[i] = i % 2 == 0 ? low[i] : high[i];
+    }
+
+    return(rates_total);
+}
